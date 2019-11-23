@@ -63,7 +63,7 @@
 
         <dependency>
             <groupId>cn.jbone</groupId>
-            <artifactId>jbone-sso-common</artifactId>
+            <artifactId>jbone-sso-client</artifactId>
             <version>${jbone.sso.version}</version>
         </dependency>
 

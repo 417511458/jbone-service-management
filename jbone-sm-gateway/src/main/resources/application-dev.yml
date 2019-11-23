@@ -83,7 +83,24 @@ jbone:
   #系统管理Feign调用配置
   rpc.sysServer.feign:
     protocol: http
-    name: jbone-sys-server
+    name: jbone-system-server
+  sso:
+    #SSO服务地址
+    ssoServerUrl: http://sso.local.jbone.cn
+    #当前系统地址
+    currentServerUrlPrefix: http://gateway.local.jbone.cn
+    #过滤器地址,SSO认证通过后会回掉到jbone.sso.currentServerUrlPrefix/jbone.sso.ssoFilterUrlPattern
+    ssoFilterUrlPattern: /sso
+    #登录成功后的跳转路径，默认"/"
+    successUrl: http://gateway.local.jbone.cn/
+    #未授权的跳转路径，默认"/403"
+    unauthorizedUrl: /403
+    #客户端Session失效时间，默认30分钟
+    clientSessionTimeout: 1800000
+    #权限过滤规则
+    filterChainDefinition:
+      "[/actuator/**]": anon  #不过滤监控端口，此处巨坑，升级到2。0之后必须用[]括起来，否则会规律所有符号.
+      "[/**]": anon #authc
 
 # info接口返回值
 info:
@@ -100,7 +117,7 @@ info:
 # 启用超时设置
 hystrix.command.default.execution.timeout.enabled: true
 # 熔断时间为10S
-hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 10000
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 30000
 # 使用线程隔离熔断
 hystrix.command.default.execution.isolation.strategy: THREAD
 # 核心线程数100

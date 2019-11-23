@@ -4,7 +4,6 @@ import cn.jbone.sso.common.token.JboneToken;
 import cn.jbone.common.rpc.Result;
 import cn.jbone.sm.gateway.constants.GatewayConstants;
 import cn.jbone.sm.gateway.token.TokenRepository;
-import cn.jbone.system.common.UserResponseDO;
 import com.alibaba.fastjson.JSON;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
