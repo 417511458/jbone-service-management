@@ -63,7 +63,7 @@
 
         <dependency>
             <groupId>cn.jbone</groupId>
-            <artifactId>jbone-sso-client</artifactId>
+            <artifactId>jbone-sso-common</artifactId>
             <version>${jbone.sso.version}</version>
         </dependency>
 
@@ -71,12 +71,6 @@
             <groupId>cn.jbone</groupId>
             <artifactId>jbone-banner</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
     </dependencies>
 
 
