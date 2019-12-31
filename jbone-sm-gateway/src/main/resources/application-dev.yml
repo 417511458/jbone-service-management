@@ -67,14 +67,24 @@ zuul:
     jbone-cms-server: /cms/**     #暴漏jbone-cms-server的服务
     jbone-fs-server: /fs/**       #文件上传
   sensitive-headers:
+  route.home: /
 
 # 转发超时时间
 ribbon:
   ReadTimeout: 10000  # 单位毫秒数
   SocketTimeout: 10000
 
+
 #CAS服务地址
 jbone:
+  gateway:
+    auth:
+      ip:
+        enabled: false
+        blackList:
+          - 127.0.0.1
+      uriWhiteList:
+        - /public/**
   #系统服务名称
   sys:
     serverName: jbone-sm-gateway

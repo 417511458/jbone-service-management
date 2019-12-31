@@ -11,8 +11,11 @@ import com.netflix.zuul.exception.ZuulException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public class TokenFilter extends ZuulFilter {
 
@@ -30,22 +33,42 @@ public class TokenFilter extends ZuulFilter {
 
     @Override
     public boolean shouldFilter() {
-        return true;
+        RequestContext requestContext = RequestContext.getCurrentContext();
+        HttpServletRequest request = requestContext.getRequest();
+        String uri = request.getRequestURI();
+        return !isInWhiteList(uri);
     }
+
+    private AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private TokenRepository tokenRepository;
 
+    private List<String> uriWhiteList;
+
     public TokenFilter(){}
-    public TokenFilter(TokenRepository tokenRepository){
+    public TokenFilter(TokenRepository tokenRepository,List<String> uriWhiteList){
         this.tokenRepository = tokenRepository;
+        this.uriWhiteList = uriWhiteList;
     }
 
+    private boolean isInWhiteList(String uri){
+        if(CollectionUtils.isEmpty(uriWhiteList)){
+            return false;
+        }
+
+        for (String pattern:uriWhiteList) {
+            if(pathMatcher.match(pattern,uri)){
+                return true;
+            }
+        }
+        return false;
+
+    }
     @Override
     public Object run() throws ZuulException {
         RequestContext requestContext = RequestContext.getCurrentContext();
         HttpServletRequest request = requestContext.getRequest();
         String token = request.getHeader(GatewayConstants.TOKEN_KEY);
-
         if(StringUtils.isBlank(token)){
             authErrorSession(requestContext,token);
             return null;

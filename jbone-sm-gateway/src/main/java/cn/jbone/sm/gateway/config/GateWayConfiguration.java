@@ -1,8 +1,13 @@
 package cn.jbone.sm.gateway.config;
 
+import cn.jbone.sm.gateway.filters.IpFilter;
 import cn.jbone.sm.gateway.filters.TokenFilter;
 import cn.jbone.sso.common.token.JboneToken;
 import cn.jbone.sm.gateway.token.TokenRepository;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -12,6 +17,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 /**
  * 跨域配置
@@ -33,10 +40,9 @@ public class GateWayConfiguration {
     }
 
 
-    @Bean
-    public TokenFilter tokenFilter(TokenRepository tokenRepository){
-        return new TokenFilter(tokenRepository);
-    }
+
+
+
 
 
 
@@ -56,6 +62,33 @@ public class GateWayConfiguration {
         template.setHashKeySerializer(string);
         template.setConnectionFactory(connectionFactory);
         return template;
+    }
+
+    @Configuration
+    @ConfigurationProperties(prefix = "jbone.gateway.auth")
+    @Data
+    public static class TokenFilterConfiguration{
+
+        @Autowired
+        private TokenRepository tokenRepository;
+        private List<String> uriWhiteList;
+        @Bean
+        public TokenFilter tokenFilter(){
+            return new TokenFilter(tokenRepository,uriWhiteList);
+        }
+    }
+
+    @Configuration
+    @ConditionalOnProperty(prefix = "jbone.gateway.auth.ip",name = "enabled",havingValue = "true")
+    @ConfigurationProperties(prefix = "jbone.gateway.auth.ip")
+    @Data
+    public static class IpFilterConfiguration{
+        private List<String> blackList;
+        @Bean
+        public IpFilter ipFilter(){
+            return new IpFilter(blackList);
+        }
+
     }
 
 }
